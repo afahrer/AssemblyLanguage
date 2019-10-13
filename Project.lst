@@ -1,8 +1,8 @@
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/10/19 16:32:49
-Question 1 (Qu1.asm					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/13/19 11:35:58
+"Assignment 1 Question 2 (A1Q2.asm			     Page 1 - 1
 
 
-				TITLE Question 1 (Qu1.asm)
+				TITLE Assignment 1 Question 2 (A1Q2.asm)
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -24,51 +24,49 @@ Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/10/19 16:32:49
 			      C 
 
  00000000			.data
- 00000000 50 6C 65 61 73	  prompt BYTE "Please enter a number: ",0
+ 00000000 50 6C 65 61 73	  prompt BYTE "Please enter a signed integer: ",0
 	   65 20 65 6E 74
 	   65 72 20 61 20
-	   6E 75 6D 62 65
-	   72 3A 20 00
- 00000018 53 6F 75 72 63	  s BYTE "Source",0
-	   65 00
- 0000001F 54 61 72 67 65	  t BYTE "Target",0
-	   74 00
- 00000026 00000000		  source DWORD 0
- 0000002A 00000000		  target DwORD 0
+	   73 69 67 6E 65
+	   64 20 69 6E 74
+	   65 67 65 72 3A
+	   20 00
+ = 00000003			  NUM = 3
+ 00000020  00000003 [		  arrayW WORD NUM DUP(0)
+	    0000
+	   ]
+ 00000026  00000003 [		  arrayD DWORD NUM DUP(0)
+	    00000000
+	   ]
  00000000			.code	
  00000000			main PROC
- 00000000  BA 00000000 R	  mov edx, OFFSET prompt
- 00000005  E8 00000000 E	  call WriteString
- 0000000A  E8 00000000 E	  call ReadInt
- 0000000F  A3 00000026 R	  mov source,eax
- 00000014  8B 1D 00000026 R	  mov ebx, source
- 0000001A  89 1D 0000002A R	  mov target, ebx
- 00000020  A1 00000026 R	  mov eax, source
- 00000025  BA 00000018 R	  mov edx, offset s
- 0000002A  E8 00000000 E	  call WriteString
- 0000002F  E8 00000000 E	  call CrLf
- 00000034  E8 00000000 E	  call WriteBin
- 00000039  E8 00000000 E	  call CrLf
- 0000003E  E8 00000000 E	  call WriteHex
- 00000043  E8 00000000 E	  call CrLf
- 00000048  E8 00000000 E	  call WriteInt
- 0000004D  E8 00000000 E	  call CrLf
- 00000052  BA 0000001F R	  mov edx, offset t
- 00000057  E8 00000000 E	  call WriteString
- 0000005C  E8 00000000 E	  call CrLf
- 00000061  E8 00000000 E	  call WriteBin
- 00000066  E8 00000000 E	  call CrLf
- 0000006B  E8 00000000 E	  call WriteHex
- 00000070  E8 00000000 E	  call CrLf
- 00000075  E8 00000000 E	  call WriteInt
+ 00000000  B9 00000003		  mov ecx, NUM
+ 00000005  BA 00000000 R	  mov edx, OFFSET prompt
+ 0000000A  66| BE 0002		  mov si, TYPE arrayW
+ 0000000E  BB 00000020 R	  mov ebx, OFFSET arrayW
+ 00000013			  l1:
+ 00000013  E8 00000000 E	    call WriteString
+ 00000018  E8 00000000 E		call ReadInt
+ 0000001D  E8 00000000 E		call CrLf
+ 00000022  66| 8B D8			mov bx, ax
+ 00000025  66| 03 DE			add bx, si
+ 00000028  E2 E9		  loop l1
+ 0000002A  B9 00000003		  mov ecx, NUM
+ 0000002F  BB 00000020 R	  mov ebx, OFFSET arrayW
+ 00000034			  l3:
+ 00000034  66| 8B C3		    mov ax, bx
+ 00000037  E8 00000000 E		call WriteBin
+ 0000003C  E8 00000000 E		call CrLf
+ 00000041  66| 03 DE			add bx, si
+ 00000044  E2 EE		  loop l3
 				  exit
- 0000007A  6A 00	   *	    push   +000000000h
- 0000007C  E8 00000000 E   *	    call   ExitProcess
- 00000081			main ENDP
+ 00000046  6A 00	   *	    push   +000000000h
+ 00000048  E8 00000000 E   *	    call   ExitProcess
+ 0000004D			main ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/10/19 16:32:49
-Question 1 (Qu1.asm					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/13/19 11:35:58
+"Assignment 1 Question 2 (A1Q2.asm			     Symbols 2 - 1
 
 
 
@@ -161,8 +159,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000002E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000081 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000032 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004D Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -269,7 +267,9 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000081 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004D Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 00000013 _TEXT	
+  l3 . . . . . . . . . . . . . .	L Near	 00000034 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -390,6 +390,7 @@ MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
+NUM  . . . . . . . . . . . . . .	Number	 00000003h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -488,6 +489,8 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+arrayD . . . . . . . . . . . . .	DWord	 00000026 _DATA	
+arrayW . . . . . . . . . . . . .	Word	 00000020 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
@@ -504,10 +507,6 @@ lightRed . . . . . . . . . . . .	Number	 0000000Ch
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 prompt . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-source . . . . . . . . . . . . .	DWord	 00000026 _DATA	
-s  . . . . . . . . . . . . . . .	Byte	 00000018 _DATA	
-target . . . . . . . . . . . . .	DWord	 0000002A _DATA	
-t  . . . . . . . . . . . . . . .	Byte	 0000001F _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

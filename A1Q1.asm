@@ -1,21 +1,27 @@
-TITLE Question 1 (Qu1.asm)
+TITLE Assignment 1 Question 1 (A1Q1.asm)
 
 INCLUDE Irvine32.inc
 
 .data
+  ;variables for strings to be printed
   prompt BYTE "Please enter a number: ",0
   s BYTE "Source",0
   t BYTE "Target",0
+  ;variables for source and target
   source DWORD 0
   target DwORD 0
 .code	
 main PROC
+  ; print the prompt string and get an integer value from the user
   mov edx, OFFSET prompt
   call WriteString
   call ReadInt
+  call CrLf
+  ; set the value of source then use ebx to copy it to target
   mov source,eax
   mov ebx, source
   mov target, ebx
+  ; print source value
   mov eax, source
   mov edx, offset s
   call WriteString
@@ -26,7 +32,10 @@ main PROC
   call CrLf
   call WriteInt
   call CrLf
+  call CrLf
+  ; print target value
   mov edx, offset t
+  mov eax, target
   call WriteString
   call CrLf
   call WriteBin
