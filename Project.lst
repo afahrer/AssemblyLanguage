@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/13/19 11:35:58
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/14/19 19:31:08
 "Assignment 1 Question 2 (A1Q2.asm			     Page 1 - 1
 
 
@@ -32,40 +32,53 @@ Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/13/19 11:35:58
 	   65 67 65 72 3A
 	   20 00
  = 00000003			  NUM = 3
- 00000020  00000003 [		  arrayW WORD NUM DUP(0)
+ 00000020  00000003 [		  arrayW SWORD NUM DUP(0)
 	    0000
 	   ]
- 00000026  00000003 [		  arrayD DWORD NUM DUP(0)
+ 00000026  00000003 [		  arrayD SDWORD NUM DUP(0)
 	    00000000
 	   ]
  00000000			.code	
  00000000			main PROC
+				  ; get signed values from user
  00000000  B9 00000003		  mov ecx, NUM
  00000005  BA 00000000 R	  mov edx, OFFSET prompt
- 0000000A  66| BE 0002		  mov si, TYPE arrayW
- 0000000E  BB 00000020 R	  mov ebx, OFFSET arrayW
- 00000013			  l1:
- 00000013  E8 00000000 E	    call WriteString
- 00000018  E8 00000000 E		call ReadInt
- 0000001D  E8 00000000 E		call CrLf
- 00000022  66| 8B D8			mov bx, ax
- 00000025  66| 03 DE			add bx, si
- 00000028  E2 E9		  loop l1
- 0000002A  B9 00000003		  mov ecx, NUM
- 0000002F  BB 00000020 R	  mov ebx, OFFSET arrayW
- 00000034			  l3:
- 00000034  66| 8B C3		    mov ax, bx
- 00000037  E8 00000000 E		call WriteBin
- 0000003C  E8 00000000 E		call CrLf
- 00000041  66| 03 DE			add bx, si
- 00000044  E2 EE		  loop l3
+ 0000000A  BE 00000002		  mov esi, TYPE arrayW
+ 0000000F  BB 00000020 R	  mov ebx, OFFSET arrayW
+ 00000014			  l1:
+ 00000014  E8 00000000 E	    call WriteString
+ 00000019  E8 00000000 E		call ReadInt
+ 0000001E  E8 00000000 E		call CrLf
+ 00000023  89 03			mov [ebx], eax
+ 00000025  03 DE			add ebx, esi
+ 00000027  E2 EB		  loop l1
+ 00000029  B9 00000003		  mov ecx, NUM
+ 0000002E  BA 00000026 R	  mov edx, OFFSET arrayD
+ 00000033			  l2:
+ 00000033  8B 03		    mov eax, [ebx] 
+ 00000035  89 02		    mov [edx], eax
+ 00000037  03 D6			add edx, esi
+ 00000039  03 D6			add edx, esi
+ 0000003B  03 DE			add ebx, esi
+ 0000003D  E2 F4		  loop l2
+				  ; print loop
+ 0000003F  B9 00000003		  mov ecx, NUM
+ 00000044  BB 00000020 R	  mov ebx, OFFSET arrayW
+ 00000049			  l3:
+				    movsx eax, DWORD PTR[edx]
+A1Q2.asm(37) : error A2070:invalid instruction operands
+ 00000049  E8 00000000 E		call WriteInt
+ 0000004E  E8 00000000 E		call CrLf
+ 00000053  03 D6			add edx, esi
+ 00000055  03 D6			add edx, esi
+ 00000057  E2 F0		  loop l3
 				  exit
- 00000046  6A 00	   *	    push   +000000000h
- 00000048  E8 00000000 E   *	    call   ExitProcess
- 0000004D			main ENDP
+ 00000059  6A 00	   *	    push   +000000000h
+ 0000005B  E8 00000000 E   *	    call   ExitProcess
+ 00000060			main ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/13/19 11:35:58
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/14/19 19:31:08
 "Assignment 1 Question 2 (A1Q2.asm			     Symbols 2 - 1
 
 
@@ -160,7 +173,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000032 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004D Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000060 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -267,9 +280,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004D Public STDCALL
-  l1 . . . . . . . . . . . . . .	L Near	 00000013 _TEXT	
-  l3 . . . . . . . . . . . . . .	L Near	 00000034 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000060 Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 00000014 _TEXT	
+  l2 . . . . . . . . . . . . . .	L Near	 00000033 _TEXT	
+  l3 . . . . . . . . . . . . . .	L Near	 00000049 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -512,4 +526,4 @@ wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
 	   0 Warnings
-	   0 Errors
+	   1 Errors
