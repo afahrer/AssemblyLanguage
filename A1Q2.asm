@@ -1,4 +1,4 @@
-TITLE Assignment 1 Question 2 (A1Q2.asm)
+TITLE Assignment 1 Question B (A1QB.asm)
 
 INCLUDE Irvine32.inc
 
