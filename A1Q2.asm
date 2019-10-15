@@ -21,24 +21,29 @@ main PROC
 	mov [ebx], eax
 	add ebx, esi
   loop l1
-  mov ecx, NUM
-  mov edx, OFFSET arrayD
-  l2:
-    mov eax, [ebx] 
-    mov [edx], eax
-	add edx, esi
-	add edx, esi
-	add ebx, esi
-  loop l2
-  ; print loop
+  ; copy arrayW values to arrayD
   mov ecx, NUM
   mov ebx, OFFSET arrayW
+  mov edx, OFFSET arrayD
+  l2:
+	mov eax, [ebx]
+	mov [edx], eax
+	; increment edx
+	add edx, esi
+	add edx, esi
+	; increment ebx
+	add ebx, esi
+  loop l2
+  ; print DWORD array
+  mov ecx, NUM
+  mov ebx, OFFSET arrayD
+  mov esi, TYPE arrayD
   l3:
-    movsx eax, DWORD PTR[edx]
+    movsx eax, WORD PTR[ebx]
 	call WriteInt
-	call CrLf
-	add edx, esi
-	add edx, esi
+	mov al, ' '
+	call WriteChar
+	add ebx, esi
   loop l3
   exit
 main ENDP

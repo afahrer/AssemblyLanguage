@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/14/19 19:31:08
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/15/19 15:45:41
 "Assignment 1 Question 2 (A1Q2.asm			     Page 1 - 1
 
 
@@ -24,61 +24,82 @@ Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/14/19 19:31:08
 			      C 
 
  00000000			.data
- 00000000 50 6C 65 61 73	  prompt BYTE "Please enter a signed integer: ",0
-	   65 20 65 6E 74
-	   65 72 20 61 20
-	   73 69 67 6E 65
-	   64 20 69 6E 74
-	   65 67 65 72 3A
+ 00000000 45 6E 74 65 72	  promptP BYTE "Enter an unsigned value for P: ",0			
+	   20 61 6E 20 75
+	   6E 73 69 67 6E
+	   65 64 20 76 61
+	   6C 75 65 20 66
+	   6F 72 20 50 3A
 	   20 00
- = 00000003			  NUM = 3
- 00000020  00000003 [		  arrayW SWORD NUM DUP(0)
-	    0000
-	   ]
- 00000026  00000003 [		  arrayD SDWORD NUM DUP(0)
-	    00000000
-	   ]
+ 00000020 45 6E 74 65 72	  promptR BYTE "Enter an unsigned value for R: ",0			
+	   20 61 6E 20 75
+	   6E 73 69 67 6E
+	   65 64 20 76 61
+	   6C 75 65 20 66
+	   6F 72 20 52 3A
+	   20 00
+ 00000040 45 6E 74 65 72	  promptT BYTE "Enter an unsigned value for T: ",0
+	   20 61 6E 20 75
+	   6E 73 69 67 6E
+	   65 64 20 76 61
+	   6C 75 65 20 66
+	   6F 72 20 54 3A
+	   20 00
+
+ 00000060 45 6E 74 65 72	  promptQ BYTE "Enter a signed value for Q: ",0	
+	   20 61 20 73 69
+	   67 6E 65 64 20
+	   76 61 6C 75 65
+	   20 66 6F 72 20
+	   51 3A 20 00
+ 0000007D 45 6E 74 65 72	  promptS BYTE "Enter a signed value for S: ",0	
+	   20 61 20 73 69
+	   67 6E 65 64 20
+	   76 61 6C 75 65
+	   20 66 6F 72 20
+	   53 3A 20 00
+
+ 0000009A 00000000		  p DWORD ?
+ 0000009E 00000000		  q SDWORD ?
+ 000000A2 00000000		  r DWORD ?
+ 000000A6 00000000		  s SDWORD ?
+ 000000AA 00000000		  t DWORD ?
  00000000			.code	
  00000000			main PROC
-				  ; get signed values from user
- 00000000  B9 00000003		  mov ecx, NUM
- 00000005  BA 00000000 R	  mov edx, OFFSET prompt
- 0000000A  BE 00000002		  mov esi, TYPE arrayW
- 0000000F  BB 00000020 R	  mov ebx, OFFSET arrayW
- 00000014			  l1:
- 00000014  E8 00000000 E	    call WriteString
- 00000019  E8 00000000 E		call ReadInt
- 0000001E  E8 00000000 E		call CrLf
- 00000023  89 03			mov [ebx], eax
- 00000025  03 DE			add ebx, esi
- 00000027  E2 EB		  loop l1
- 00000029  B9 00000003		  mov ecx, NUM
- 0000002E  BA 00000026 R	  mov edx, OFFSET arrayD
- 00000033			  l2:
- 00000033  8B 03		    mov eax, [ebx] 
- 00000035  89 02		    mov [edx], eax
- 00000037  03 D6			add edx, esi
- 00000039  03 D6			add edx, esi
- 0000003B  03 DE			add ebx, esi
- 0000003D  E2 F4		  loop l2
-				  ; print loop
- 0000003F  B9 00000003		  mov ecx, NUM
- 00000044  BB 00000020 R	  mov ebx, OFFSET arrayW
- 00000049			  l3:
-				    movsx eax, DWORD PTR[edx]
-A1Q2.asm(37) : error A2070:invalid instruction operands
- 00000049  E8 00000000 E		call WriteInt
- 0000004E  E8 00000000 E		call CrLf
- 00000053  03 D6			add edx, esi
- 00000055  03 D6			add edx, esi
- 00000057  E2 F0		  loop l3
+				  
+ 00000000  BA 00000000 R	  mov edx, OFFSET promptP		
+ 00000005  E8 00000000 E	  call WriteString			    
+ 0000000A  E8 00000000 E	  call ReadDec			        
+ 0000000F  A3 0000009A R	  mov p, eax					
+				  
+ 00000014  BA 00000020 R	  mov edx, OFFSET promptR		
+ 00000019  E8 00000000 E	  call WriteString			    
+ 0000001E  E8 00000000 E	  call ReadDec			        
+ 00000023  A3 000000A2 R	  mov r, eax					
+				  
+ 00000028  BA 00000040 R	  mov edx, OFFSET promptT		
+ 0000002D  E8 00000000 E	  call WriteString			    
+ 00000032  E8 00000000 E	  call ReadDec			        
+ 00000037  A3 000000A2 R	  mov r, eax					
+				  
+ 0000003C  BA 00000060 R	  mov edx, OFFSET promptQ		
+ 00000041  E8 00000000 E	  call WriteString			    
+ 00000046  E8 00000000 E	  call ReadInt			        
+ 0000004B  A3 0000009E R	  mov q, eax					
+				  
+ 00000050  BA 0000007D R	  mov edx, OFFSET promptS		
+ 00000055  E8 00000000 E	  call WriteString			    
+ 0000005A  E8 00000000 E	  call ReadInt			        
+ 0000005F  A3 000000A6 R	  mov s, eax					
+
+
 				  exit
- 00000059  6A 00	   *	    push   +000000000h
- 0000005B  E8 00000000 E   *	    call   ExitProcess
- 00000060			main ENDP
+ 00000064  6A 00	   *	    push   +000000000h
+ 00000066  E8 00000000 E   *	    call   ExitProcess
+ 0000006B			main ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/14/19 19:31:08
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/15/19 15:45:41
 "Assignment 1 Question 2 (A1Q2.asm			     Symbols 2 - 1
 
 
@@ -172,8 +193,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000032 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000060 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000AE Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000006B Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -280,10 +301,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000060 Public STDCALL
-  l1 . . . . . . . . . . . . . .	L Near	 00000014 _TEXT	
-  l2 . . . . . . . . . . . . . .	L Near	 00000033 _TEXT	
-  l3 . . . . . . . . . . . . . .	L Near	 00000049 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000006B Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -404,7 +422,6 @@ MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
-NUM  . . . . . . . . . . . . . .	Number	 00000003h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -503,8 +520,6 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-arrayD . . . . . . . . . . . . .	DWord	 00000026 _DATA	
-arrayW . . . . . . . . . . . . .	Word	 00000020 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
@@ -519,11 +534,20 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-prompt . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+promptP  . . . . . . . . . . . .	Byte	 00000000 _DATA	
+promptQ  . . . . . . . . . . . .	Byte	 00000060 _DATA	
+promptR  . . . . . . . . . . . .	Byte	 00000020 _DATA	
+promptS  . . . . . . . . . . . .	Byte	 0000007D _DATA	
+promptT  . . . . . . . . . . . .	Byte	 00000040 _DATA	
+p  . . . . . . . . . . . . . . .	DWord	 0000009A _DATA	
+q  . . . . . . . . . . . . . . .	DWord	 0000009E _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+r  . . . . . . . . . . . . . . .	DWord	 000000A2 _DATA	
+s  . . . . . . . . . . . . . . .	DWord	 000000A6 _DATA	
+t  . . . . . . . . . . . . . . .	DWord	 000000AA _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
 	   0 Warnings
-	   1 Errors
+	   0 Errors
