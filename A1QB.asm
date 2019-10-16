@@ -4,9 +4,9 @@ INCLUDE Irvine32.inc
 
 .data
   prompt BYTE "Please enter a signed integer: ",0
-  NUM = 3
-  arrayW SWORD NUM DUP(0)
-  arrayD SDWORD NUM DUP(0)
+  NUM = 10
+  arrayW SWORD NUM DUP(?)
+  arrayD SDWORD NUM DUP(?)
 .code	
 main PROC
   ; get signed values from user

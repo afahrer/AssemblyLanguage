@@ -1,4 +1,4 @@
-TITLE Assignment 1 Question 1 (A1Q1.asm)
+TITLE Assignment 1 Question A (A1QA.asm)
 
 INCLUDE Irvine32.inc
 
@@ -8,8 +8,8 @@ INCLUDE Irvine32.inc
   s BYTE "Source",0
   t BYTE "Target",0
   ;variables for source and target
-  source DWORD 0
-  target DwORD 0
+  source DWORD ?
+  target DwORD ?
 .code	
 main PROC
   ; print the prompt string and get an integer value from the user
