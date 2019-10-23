@@ -3,7 +3,7 @@ TITLE Assignment 4 Question A (A4QA.asm)
 INCLUDE Irvine32.inc
 
 .data
-  ;variables for strings to be printed
+  ; variables for strings to be printed
   prompt BYTE "Enter the file name: ",0
   secretPrompt BYTE "Secret Message: ",0
   ; buffer accepts a string up to 30 characters in length
@@ -16,52 +16,47 @@ main PROC
   ; print the prompt string and get an integer value from the user
   mov edx, OFFSET prompt
   call WriteString
-  
+  ; get the file name from user
   mov edx, OFFSET buffer
   mov ecx, SIZEOF buffer
   call ReadString
   call OpenInputFile
-  mov fileHandle, eax
-
+  ; store the file handle
+  mov fileHandle, eax 
+  ; capture the first 26 bytes of the file and store in the letters array
   mov edx, OFFSET letters
   mov ecx, SIZEOF letters
   call ReadFromFile
-
+  ; capture the next 27 bytes of the file and store in the index array
+  mov eax, fileHandle
   mov edx, OFFSET index
   mov ecx, SIZEOF index
   call ReadFromFile
-  
+  ; close the file
   mov eax, fileHandle
   call CloseFile
-
-  mov ecx, LENGTHOF letters
-
+  ; print the secret message prompt
+  mov edx, OFFSET secretPrompt
+  call WriteString
+  ; set up registers for the loop
   mov ebx, OFFSET letters
-  mov esi, TYPE letters
-  mov al, '['
-  call WriteChar
-  l3:
-	movsx eax, WORD PTR[ebx]
+  mov ecx, LENGTHOF letters
+  mov edx, OFFSET index
+  ; start at the end of the array
+  add edx, LENGTHOF letters
+  l1:
+    ; get the next index value
+	movsx esi, BYTE PTR[edx]
+	; reset edx then add esi to get to the correct index
+	mov edx, OFFSET index
+	add edx, esi
+	; add ebx to esi, ebx contains the memory address of array index 0
+	add esi, ebx
+	; get the letter value and print to the console
+	mov eax, [esi]
 	call WriteChar
-	add ebx, esi
-  loop l3
-  mov al, ']'
-  call WriteChar
-
-  mov ecx, LENGTHOF index
-  mov ebx, OFFSET index
-  mov esi, TYPE index
-  mov al, '['
-  call WriteChar
-  l2:
-	mov eax, [ebx]
-	call Writeint
-	add ebx, esi
-  loop l2
-
-  mov al, ']'
-  call WriteChar
-  
+  loop l1
+  call CrLf 
   exit
 main ENDP
 

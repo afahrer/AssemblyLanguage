@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/23/19 11:44:47
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/23/19 17:12:06
 "Assignment 4 Question A (A4QA.asm			     Page 1 - 1
 
 
@@ -24,7 +24,7 @@ Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/23/19 11:44:47
 			      C 
 
  00000000			.data
-				  ;variables for strings to be printed
+				  ; variables for strings to be printed
  00000000 45 6E 74 65 72	  prompt BYTE "Enter the file name: ",0
 	   20 74 68 65 20
 	   66 69 6C 65 20
@@ -55,48 +55,62 @@ Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/23/19 11:44:47
  00000028  B9 0000001A		  mov ecx, SIZEOF letters
  0000002D  E8 00000000 E	  call ReadFromFile
 
- 00000032  BA 0000005F R	  mov edx, OFFSET index
- 00000037  B9 0000001B		  mov ecx, SIZEOF index
- 0000003C  E8 00000000 E	  call ReadFromFile
+ 00000032  A1 0000007A R	  mov eax, fileHandle
+ 00000037  BA 0000005F R	  mov edx, OFFSET index
+ 0000003C  B9 0000001B		  mov ecx, SIZEOF index
+ 00000041  E8 00000000 E	  call ReadFromFile
 				  
- 00000041  A1 0000007A R	  mov eax, fileHandle
- 00000046  E8 00000000 E	  call CloseFile
+ 00000046  A1 0000007A R	  mov eax, fileHandle
+ 0000004B  E8 00000000 E	  call CloseFile
 
- 0000004B  B9 0000001A		  mov ecx, LENGTHOF letters
+ 00000050  BA 00000016 R	  mov edx, OFFSET secretPrompt
+ 00000055  E8 00000000 E	  call WriteString
+				  ;constant
+ 0000005A  BB 00000045 R	  mov ebx, OFFSET letters
+ 0000005F  B9 0000001A		  mov ecx, LENGTHOF letters
+ 00000064  BA 0000005F R	  mov edx, OFFSET index
+ 00000069  83 C2 1A		  add edx, LENGTHOF letters
+ 0000006C			  l1:
+ 0000006C  0F BE 32		    movsx esi, BYTE PTR[edx]
+ 0000006F  BA 0000005F R		mov edx, OFFSET index
+ 00000074  03 D6			add edx, esi
+ 00000076  03 F3			add esi, ebx
+ 00000078  8B 06			mov eax, [esi]
+ 0000007A  E8 00000000 E		call WriteChar
 
- 00000050  BB 00000045 R	  mov ebx, OFFSET letters
- 00000055  BE 00000001		  mov esi, TYPE letters
- 0000005A  B0 5B		  mov al, '['
- 0000005C  E8 00000000 E	  call WriteChar
- 00000061			  l3:
- 00000061  0F BF 03			movsx eax, WORD PTR[ebx]
- 00000064  E8 00000000 E		call WriteChar
- 00000069  03 DE			add ebx, esi
- 0000006B  E2 F4		  loop l3
- 0000006D  B0 5D		  mov al, ']'
- 0000006F  E8 00000000 E	  call WriteChar
-
- 00000074  B9 0000001B		   mov ecx, LENGTHOF index
- 00000079  BB 0000005F R	  mov ebx, OFFSET index
- 0000007E  BE 00000001		  mov esi, TYPE index
- 00000083  B0 5B		  mov al, '['
- 00000085  E8 00000000 E	  call WriteChar
- 0000008A			  l2:
- 0000008A  8B 03			mov eax, [ebx]
- 0000008C  E8 00000000 E		call Writeint
- 00000091  03 DE			add ebx, esi
- 00000093  E2 F5		  loop l2
-
- 00000095  B0 5D		  mov al, ']'
+ 0000007F  E2 EB		  loop l1
+ 00000081  E8 00000000 E	  call CrLf
+ 00000086  B9 0000001A		  mov ecx, LENGTHOF letters
+				 
+ 0000008B  BB 00000045 R	  mov ebx, OFFSET letters
+ 00000090  BE 00000001		  mov esi, TYPE letters
+ 00000095  B0 5B		  mov al, '['
  00000097  E8 00000000 E	  call WriteChar
+ 0000009C			  l3:
+ 0000009C  0F BE 03		 movsx eax, BYTE PTR[ebx]
+ 0000009F  E8 00000000 E	 call WriteChar
+ 000000A4  03 DE		 add ebx, esi
+ 000000A6  E2 F4		  loop l3
+ 000000A8  B0 5D		  mov al, ']'
+ 000000AA  E8 00000000 E	  call WriteChar
+				 
+ 000000AF  B9 0000001B		  mov ecx, LENGTHOF index
+ 000000B4  BB 0000005F R	  mov ebx, OFFSET index
+ 000000B9  BE 00000001		  mov esi, TYPE index
+				 
+ 000000BE			  l2:
+ 000000BE  0F BE 03		 movsx eax, BYTE PTR[ebx]
+ 000000C1  E8 00000000 E	 call Writeint
+ 000000C6  03 DE		 add ebx, esi
+ 000000C8  E2 F4		  loop l2
 				  
 				  exit
- 0000009C  6A 00	   *	    push   +000000000h
- 0000009E  E8 00000000 E   *	    call   ExitProcess
- 000000A3			main ENDP
+ 000000CA  6A 00	   *	    push   +000000000h
+ 000000CC  E8 00000000 E   *	    call   ExitProcess
+ 000000D1			main ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/23/19 11:44:47
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/23/19 17:12:06
 "Assignment 4 Question A (A4QA.asm			     Symbols 2 - 1
 
 
@@ -191,7 +205,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 0000007E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000A3 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000D1 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -298,9 +312,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A3 Public STDCALL
-  l3 . . . . . . . . . . . . . .	L Near	 00000061 _TEXT	
-  l2 . . . . . . . . . . . . . .	L Near	 0000008A _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000D1 Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 0000006C _TEXT	
+  l3 . . . . . . . . . . . . . .	L Near	 0000009C _TEXT	
+  l2 . . . . . . . . . . . . . .	L Near	 000000BE _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
