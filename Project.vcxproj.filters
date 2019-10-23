@@ -5,7 +5,4 @@
       <UniqueIdentifier>{ba5f0c69-6bec-4f62-9167-5051f0f86bad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <MASM Include="A4QA.asm" />
-  </ItemGroup>
 </Project>

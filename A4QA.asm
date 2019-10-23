@@ -46,7 +46,7 @@ main PROC
   add edx, LENGTHOF letters
   l1:
     ; get the next index value
-	movsx esi, BYTE PTR[edx]
+	mov esi, [edx]
 	; reset edx then add esi to get to the correct index
 	mov edx, OFFSET index
 	add edx, esi
