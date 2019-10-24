@@ -26,7 +26,7 @@ main PROC
 	mov ecx, 50
     l2:
 	  ; get a random number and print it
-      call BetterRandomRange
+	  call BetterRandomRange
 	  call WriteInt
 	  call CrLf
 	  ; reset eax so that a new number can be generated
@@ -42,6 +42,7 @@ BetterRandomRange PROC
   ; subtract lower from upper and add 1 making randomRange inclusive 
   sub eax, ebx
   add eax, 1
+  ; call Randomize <-- this was causing numbers to be less random
   call RandomRange
   ; add lower back in so that the random number cannot be too low
   add eax, ebx

@@ -1,8 +1,8 @@
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/24/19 00:01:49
-"Assignment 4 Question B (A4QB.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/24/19 13:26:05
+"Assignment 4 Question A (A4QA.asm			     Page 1 - 1
 
 
-				TITLE Assignment 4 Question B (A4QB.asm)
+				TITLE Assignment 4 Question A (A4QA.asm)
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -24,52 +24,75 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/24/19 00:01:49
 			      C 
 
  00000000			.data
- 00000000 55 70 70 65 72	  upperPrompt BYTE "Upper Value ",0
-	   20 56 61 6C 75
-	   65 20 00
- 0000000D 4C 6F 77 65 72	  lowerPrompt BYTE "Lower Value ",0
-	   20 56 61 6C 75
-	   65 20 00
- 0000001A 00000000		  upper DWORD ?
+				  ; variables for strings to be printed
+ 00000000 45 6E 74 65 72	  prompt BYTE "Enter the file name: ",0
+	   20 74 68 65 20
+	   66 69 6C 65 20
+	   6E 61 6D 65 3A
+	   20 00
+ 00000016 53 65 63 72 65	  secretPrompt BYTE "Secret Message: ",0
+	   74 20 4D 65 73
+	   73 61 67 65 3A
+	   20 00
+				  ; buffer accepts a string up to 30 characters in length
+ 00000027			  buffer BYTE 30 DUP(?)
+ 00000045			  letters BYTE 26 DUP(?)
+ 0000005F			  index BYTE 27 DUP(?)
+ 0000007A 00000000		  fileHandle HANDLE ?
  00000000			.code	
  00000000			main PROC
- 00000000  B9 00000005		  mov ecx, 5
- 00000005			  l1:
- 00000005  BA 0000000D R	    mov edx, OFFSET lowerPrompt
- 0000000A  E8 00000000 E		call WriteString
- 0000000F  E8 00000000 E		call ReadInt
- 00000014  8B D8			mov ebx, eax
- 00000016  BA 00000000 R		mov edx, OFFSET upperPrompt
- 0000001B  E8 00000000 E		call WriteString
- 00000020  E8 00000000 E		call ReadInt
- 00000025  A3 0000001A R		mov upper, eax
- 0000002A  51				push ecx
- 0000002B  B9 00000032			mov ecx, 50
- 00000030			    l2:
- 00000030  E8 0000001B		      call BetterRandomRange
- 00000035  E8 00000000 E		  call WriteInt
- 0000003A  E8 00000000 E		  call CrLf
- 0000003F  A1 0000001A R		  mov eax, upper
- 00000044  E2 EA		    loop l2
- 00000046  59				pop ecx
- 00000047  E2 BC		  loop l1
+				  ; print the prompt string and get an integer value from the user
+ 00000000  BA 00000000 R	  mov edx, OFFSET prompt
+ 00000005  E8 00000000 E	  call WriteString
+				  ; get the file name from user
+ 0000000A  BA 00000027 R	  mov edx, OFFSET buffer
+ 0000000F  B9 0000001E		  mov ecx, SIZEOF buffer
+ 00000014  E8 00000000 E	  call ReadString
+ 00000019  E8 00000000 E	  call OpenInputFile
+				  ; store the file handle
+ 0000001E  A3 0000007A R	  mov fileHandle, eax 
+				  ; capture the first 26 bytes of the file and store in the letters array
+ 00000023  BA 00000045 R	  mov edx, OFFSET letters
+ 00000028  B9 0000001A		  mov ecx, SIZEOF letters
+ 0000002D  E8 00000000 E	  call ReadFromFile
+				  ; capture the next 27 bytes of the file and store in the index array
+ 00000032  A1 0000007A R	  mov eax, fileHandle
+ 00000037  BA 0000005F R	  mov edx, OFFSET index
+ 0000003C  B9 0000001B		  mov ecx, SIZEOF index
+ 00000041  E8 00000000 E	  call ReadFromFile
+				  ; close the file
+ 00000046  A1 0000007A R	  mov eax, fileHandle
+ 0000004B  E8 00000000 E	  call CloseFile
+				  ; print the secret message prompt
+ 00000050  BA 00000016 R	  mov edx, OFFSET secretPrompt
+ 00000055  E8 00000000 E	  call WriteString
+				  ; set up registers for the loop
+ 0000005A  BB 00000045 R	  mov ebx, OFFSET letters
+ 0000005F  B9 0000001A		  mov ecx, LENGTHOF letters
+ 00000064  BA 0000005F R	  mov edx, OFFSET index
+				  ; start at the end of the array
+ 00000069  83 C2 1A		  add edx, LENGTHOF letters
+ 0000006C			  l1:
+				    ; get the next index value
+ 0000006C  8B 32			mov esi, [edx]
+					; reset edx then add esi to get to the correct index
+ 0000006E  BA 0000005F R		mov edx, OFFSET index
+ 00000073  03 D6			add edx, esi
+					; add ebx to esi, ebx contains the memory address of array index 0
+ 00000075  03 F3			add esi, ebx
+					; get the letter value and print to the console
+ 00000077  8B 06			mov eax, [esi]
+ 00000079  E8 00000000 E		call WriteChar
+ 0000007E  E2 EC		  loop l1
+ 00000080  E8 00000000 E	  call CrLf 
 				  exit
- 00000049  6A 00	   *	    push   +000000000h
- 0000004B  E8 00000000 E   *	    call   ExitProcess
- 00000050			main ENDP
-
- 00000050			BetterRandomRange PROC
- 00000050  2B C3		  sub eax, ebx
- 00000052  83 C0 01		  add eax, 1
- 00000055  E8 00000000 E	  call RandomRange
- 0000005A  03 C3		  add eax, ebx
- 0000005C  C3			  ret
- 0000005D			BetterRandomRange ENDP
+ 00000085  6A 00	   *	    push   +000000000h
+ 00000087  E8 00000000 E   *	    call   ExitProcess
+ 0000008C			main ENDP
 
 				END main
-
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/24/19 00:01:49
-"Assignment 4 Question B (A4QB.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    10/24/19 13:26:05
+"Assignment 4 Question A (A4QA.asm			     Symbols 2 - 1
 
 
 
@@ -162,15 +185,14 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000001E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005D Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000007E Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000008C Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-BetterRandomRange  . . . . . . .	P Near	 00000050 _TEXT	Length= 0000000D Public STDCALL
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -271,9 +293,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000050 Public STDCALL
-  l1 . . . . . . . . . . . . . .	L Near	 00000005 _TEXT	
-  l2 . . . . . . . . . . . . . .	L Near	 00000030 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000008C Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 0000006C _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -495,21 +516,24 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+buffer . . . . . . . . . . . . .	Byte	 00000027 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+fileHandle . . . . . . . . . . .	DWord	 0000007A _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+index  . . . . . . . . . . . . .	Byte	 0000005F _DATA	
+letters  . . . . . . . . . . . .	Byte	 00000045 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
-lowerPrompt  . . . . . . . . . .	Byte	 0000000D _DATA	
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+prompt . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-upperPrompt  . . . . . . . . . .	Byte	 00000000 _DATA	
-upper  . . . . . . . . . . . . .	DWord	 0000001A _DATA	
+secretPrompt . . . . . . . . . .	Byte	 00000016 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
