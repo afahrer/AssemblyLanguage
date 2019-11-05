@@ -1,5 +1,5 @@
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/24/19 22:42:41
-"Assignment 4 Question A (A4QA.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    11/05/19 15:48:56
+"Assignment 5 Question A (A4QA.asm			     Page 1 - 1
 
 
 				TITLE Assignment 5 Question A (A4QA.asm)
@@ -36,85 +36,123 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/24/19 22:42:41
 	   6E 61 6D 65 3A
 	   20 00
  00000098 00000000		  file_handle DWORD ?
- 0000009C  00000024 [		  count BYTE 36 DUP(0)
-	    00
+ 0000009C  00000024 [		  count WORD 36 DUP(0)
+	    0000
 	   ]
- 000000C0 43 6F 75 6E 74	  value BYTE "Count of ",0
+ 000000E4 43 6F 75 6E 74	  value BYTE "Count of ",0
 	   20 6F 66 20 00
+ 000000EE 27 20 3D 20 00	  equals BYTE "' = ",0
  00000000			.code	
  00000000			main PROC
-				  ; print the prompt string and get an integer value from the user
- 00000000  BA 00000082 R	  mov edx, OFFSET prompt
+ 00000000  BA 00000082 R	  mov edx, OFFSET prompt			; print the prompt string and get an integer value from the user
  00000005  E8 00000000 E	  call WriteString
-				  ; get the file name from user	
  0000000A  BA 00000000 R	  mov edx, OFFSET file
  0000000F  B9 0000001E		  mov ecx, LENGTHOF file
- 00000014  E8 00000000 E	  call ReadString
+ 00000014  E8 00000000 E	  call ReadString					; get the file name from user	
  00000019  E8 00000000 E	  call OpenInputFile
-				  ; store the file handle
- 0000001E  A3 0000007A R	  mov fileHandle, eax 
-				  ; capture the first 26 bytes of the file and store in the letters array
- 00000023  BA 00000045 R	  mov edx, OFFSET letters
- 00000028  B9 0000001A		  mov ecx, SIZEOF letters
- 0000002D  E8 00000000 E	  call ReadFromFile
-				  ; capture the next 27 bytes of the file and store in the index array
- 00000032  A1 0000007A R	  mov eax, fileHandle
- 00000037  BA 0000005F R	  mov edx, OFFSET index
- 0000003C  B9 0000001B		  mov ecx, SIZEOF index
- 00000041  E8 00000000 E	  call ReadFromFile
-				  ; close the file
- 00000046  A1 0000007A R	  mov eax, fileHandle
- 0000004B  E8 00000000 E	  call CloseFile
-				  ; print the secret message prompt
- 00000050  BA 00000016 R	  mov edx, OFFSET secretPrompt
- 00000055  E8 00000000 E	  call WriteString
-				  ; set up registers for the loop
- 0000005A  BB 00000045 R	  mov ebx, OFFSET letters
- 0000005F  B9 0000001A		  mov ecx, LENGTHOF letters
- 00000064  BA 0000005F R	  mov edx, OFFSET index
-				  ; start at the end of the array
- 00000069  83 C2 1A		  add edx, LENGTHOF letters
- 0000006C			  l1:
-				    ; get the next index value
- 0000006C  0F BE 32			movsx esi, BYTE PTR[edx]
-					; reset edx then add esi to get to the correct index
- 0000006F  BA 0000005F R		mov edx, OFFSET index
- 00000074  03 D6			add edx, esi
-					; add ebx to esi, ebx contains the memory address of array index 0
- 00000076  03 F3			add esi, ebx
-					; get the letter value and print to the console
- 00000078  8B 06			mov eax, [esi]
- 0000007A  E8 00000000 E		call WriteChar
- 0000007F  E2 EB		  loop l1
- 00000081  E8 00000000 E	  call CrLf 
-				  exit
- 00000086  6A 00	   *	    push   +000000000h
- 00000088  E8 00000000 E   *	    call   ExitProcess
- 0000008D			main ENDP
+ 0000001E  A3 00000098 R	  mov file_handle, eax
+ 00000023  51			  push ecx
+ 00000024			l1:							
+ 00000024  BA 0000001E R	  mov edx, OFFSET buffer			; read 100 chars from file 
+ 00000029  B9 00000064		  mov ecx, LENGTHOF buffer
+ 0000002E  E8 00000000 E	  call ReadFromFile
+ 00000033  83 F8 00		  cmp eax, 0						; if no bytes are left to read then leave the loop
+ 00000036  74 1C		  je done
+ 00000038  BA 0000001E R	  mov edx, OFFSET buffer			; Set up registers and call countChars
+ 0000003D  BE 0000009C R	  mov esi, OFFSET count
+ 00000042  B9 00000064		  mov ecx, LENGTHOF buffer
+ 00000047  E8 0000002C		  call countChars
+ 0000004C  A1 00000098 R	  mov eax, file_handle				; put the file handle eax
+ 00000051  59			  pop ecx
+ 00000052  E2 D0		loop l1
+ 00000054			done:
+ 00000054  BE 0000009C R	  mov esi, OFFSET count			
+ 00000059  B9 0000000A		  mov ecx, 10						; Set the registers needed for print procedure
+ 0000005E  B3 30		  mov bl, '0'
+ 00000060  E8 0000006B		  call print
+ 00000065  B9 0000001A		  mov ecx, 26						; Set the registers needed for print procedure
+ 0000006A  B3 41		  mov bl, 'A'
+ 0000006C  E8 0000005F		  call print
+				exit
+ 00000071  6A 00	   *	    push   +000000000h
+ 00000073  E8 00000000 E   *	    call   ExitProcess
+ 00000078			main ENDP
 
- 000000CC			print PROC ; ecx, loop count -- bl, starting char value
- 000000CC  BA 000000C0 R	  mov edx, OFFSET value
- 000000D1			l3:
- 000000D1  E8 00000000 E	  call WriteString
- 000000D6  B0 27		  mov al, 39
- 000000D8  E8 00000000 E	  call WriteChar
- 000000DD  8A C3		  mov al, bl
- 000000DF  E8 00000000 E	  call WriteChar
- 000000E4  B0 27		  mov al, 39
- 000000E6  E8 00000000 E	  call WriteChar
- 000000EB  B0 20		  mov al, ' '
- 000000ED  E8 00000000 E	  call WriteChar
- 000000F2  0F BE 06		  movsx eax, BYTE PTR[esi]
+				; esi, offset count -- edx, offset buffer
+ 00000078			countChars PROC USES ecx
+ 00000078  51		   *	    push   ecx
+ 00000079			  l1:
+ 00000079  51			    push ecx
+ 0000007A  8A 02			mov al, [edx]
+ 0000007C  E8 00000042			call isLetter
+ 00000081  74 02			jz letter 
+ 00000083  EB 1E			jmp number
+ 00000085			  letter:
+ 00000085  24 DF			and al, 11011111b
+ 00000087  B9 0000001A			mov ecx, 26
+ 0000008C  B3 5A			mov bl, 'Z'
+ 0000008E				l2:
+ 0000008E  3A D8			  cmp bl, al
+ 00000090  74 06			  je plus
+ 00000092  FE CB			  dec bl
+ 00000094  E2 F8			loop l2
+ 00000096  EB 25			jmp continue
+ 00000098				plus:
+ 00000098  66| 83 84 09			  add count[ecx + ecx + 18], 1
+	   000000AE R 01
+ 000000A1  EB 1A			jmp continue
+ 000000A3			  number:
+ 000000A3  B9 0000000A			mov ecx, 10
+ 000000A8  B3 39			mov bl, '9'
+ 000000AA				l3:
+ 000000AA  3A D8			  cmp bl, al
+ 000000AC  74 06			  je plusNum
+ 000000AE  FE CB			  dec bl
+ 000000B0  E2 F8			loop l3
+ 000000B2  EB 09			jmp continue
+ 000000B4			  plusNum:
+ 000000B4  66| 83 84 09			add count[ecx + ecx - 2], 1
+	   0000009A R 01
+ 000000BD			  continue:
+ 000000BD  42			    inc edx
+ 000000BE  59				pop ecx
+ 000000BF  E2 B8		  loop l1
+				  ret
+ 000000C1  59		   *	    pop    ecx
+ 000000C2  C3		   *	    ret    00000h
+ 000000C3			countChars ENDP
+
+				; does not account for values between upper and lower case
+ 000000C3			isLetter PROC
+ 000000C3  3C 7A		  cmp al, 'z'
+ 000000C5  77 08		  ja ID1
+ 000000C7  3C 41		  cmp al, 'A'
+ 000000C9  72 04		  jb ID1
+ 000000CB  66| A9 0000		  test ax, 0
+ 000000CF  C3			  ID1: ret
+ 000000D0			isLetter ENDP
+
+ 000000D0			print PROC ; ecx, loop count -- bl, starting char value
+ 000000D0			l1:
+ 000000D0  BA 000000E4 R	  mov edx, OFFSET value			; print value prompt
+ 000000D5  E8 00000000 E	  call WriteString
+ 000000DA  B0 27		  mov al, 39					; 39 = ascii '
+ 000000DC  E8 00000000 E	  call WriteChar
+ 000000E1  8A C3		  mov al, bl					; get the current char value and print
+ 000000E3  E8 00000000 E	  call WriteChar
+ 000000E8  BA 000000EE R	  mov edx, OFFSET equals		; print ' = 
+ 000000ED  E8 00000000 E	  call WriteString
+ 000000F2  0F BF 06		  movsx eax, WORD PTR[esi]		; Get the count value and print
  000000F5  E8 00000000 E	  call WriteDec
  000000FA  E8 00000000 E	  call CrLf
- 000000FF  FE C3		  inc bl
- 00000101  46			  inc esi
- 00000102  E2 CD		loop l3
- 00000104  C3			ret
- 00000105			print ENDP
+ 000000FF  FE C3		  inc bl						; Move to the next char value
+ 00000101  83 C6 02		  add esi, 2					; add 2 to esi to increment since count is WORD array
+ 00000104  E2 CA		loop l1
+ 00000106  C3			ret
+ 00000107			print ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    10/24/19 22:42:41
-"Assignment 4 Question A (A4QA.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.23.28105.4	    11/05/19 15:48:56
+"Assignment 5 Question A (A4QA.asm			     Symbols 2 - 1
 
 
 
@@ -207,8 +245,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000007E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000008D Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000F3 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000107 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -315,11 +353,23 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000008D Public STDCALL
-  l1 . . . . . . . . . . . . . .	L Near	 0000006C _TEXT	
+countChars . . . . . . . . . . .	P Near	 00000078 _TEXT	Length= 0000004B Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 00000079 _TEXT	
+  letter . . . . . . . . . . . .	L Near	 00000085 _TEXT	
+  l2 . . . . . . . . . . . . . .	L Near	 0000008E _TEXT	
+  plus . . . . . . . . . . . . .	L Near	 00000098 _TEXT	
+  number . . . . . . . . . . . .	L Near	 000000A3 _TEXT	
+  l3 . . . . . . . . . . . . . .	L Near	 000000AA _TEXT	
+  plusNum  . . . . . . . . . . .	L Near	 000000B4 _TEXT	
+  continue . . . . . . . . . . .	L Near	 000000BD _TEXT	
+isLetter . . . . . . . . . . . .	P Near	 000000C3 _TEXT	Length= 0000000D Public STDCALL
+  ID1  . . . . . . . . . . . . .	L Near	 000000CF _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000078 Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 00000024 _TEXT	
+  done . . . . . . . . . . . . .	L Near	 00000054 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-print  . . . . . . . . . . . . .	P Near	 000000CC _TEXT	Length= 00000039 Public STDCALL
-  l3 . . . . . . . . . . . . . .	L Near	 000000D1 _TEXT	
+print  . . . . . . . . . . . . .	P Near	 000000D0 _TEXT	Length= 00000037 Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 000000D0 _TEXT	
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 
@@ -541,8 +591,9 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 buffer . . . . . . . . . . . . .	Byte	 0000001E _DATA	
-count  . . . . . . . . . . . . .	Byte	 0000009C _DATA	
+count  . . . . . . . . . . . . .	Word	 0000009C _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+equals . . . . . . . . . . . . .	Byte	 000000EE _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 file_handle  . . . . . . . . . .	DWord	 00000098 _DATA	
 file . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
@@ -557,7 +608,7 @@ lightRed . . . . . . . . . . . .	Number	 0000000Ch
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 prompt . . . . . . . . . . . . .	Byte	 00000082 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-value  . . . . . . . . . . . . .	Byte	 000000C0 _DATA	
+value  . . . . . . . . . . . . .	Byte	 000000E4 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

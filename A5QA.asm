@@ -7,17 +7,16 @@ INCLUDE Irvine32.inc
   buffer BYTE 100 DUP(?)
   prompt BYTE "Enter the file name: ",0
   file_handle DWORD ?
-  count BYTE 36 DUP(0)
+  count WORD 36 DUP(0)
   value BYTE "Count of ",0
+  equals BYTE "' = ",0
 .code	
 main PROC
-  ; print the prompt string and get an integer value from the user
-  mov edx, OFFSET prompt
+  mov edx, OFFSET prompt			; print the prompt string and get an integer value from the user
   call WriteString
-  ; get the file name from user	
   mov edx, OFFSET file
   mov ecx, LENGTHOF file
-  call ReadString
+  call ReadString					; get the file name from user	
   call OpenInputFile
   mov file_handle, eax
   push ecx
@@ -35,12 +34,11 @@ l1:
   pop ecx
 loop l1
 done:
-  mov esi, OFFSET count
-  mov ecx, 10
-  ; print numbers
+  mov esi, OFFSET count			
+  mov ecx, 10						; Set the registers needed for print procedure
   mov bl, '0'
   call print
-  mov ecx, 26
+  mov ecx, 26						; Set the registers needed for print procedure
   mov bl, 'A'
   call print
 exit
@@ -65,7 +63,7 @@ countChars PROC USES ecx
 	loop l2
 	jmp continue
 	plus:
-	  add count[ecx + 9], 1
+	  add count[ecx + ecx + 18], 1
 	jmp continue
   number:
 	mov ecx, 10
@@ -77,7 +75,7 @@ countChars PROC USES ecx
 	loop l3
 	jmp continue
   plusNum:
-	add count[ecx-1], 1
+	add count[ecx + ecx - 2], 1
   continue:
     inc edx
 	pop ecx
@@ -96,23 +94,21 @@ isLetter PROC
 isLetter ENDP
 
 print PROC ; ecx, loop count -- bl, starting char value
-  mov edx, OFFSET value
-l3:
+l1:
+  mov edx, OFFSET value			; print value prompt
   call WriteString
-  mov al, 39
+  mov al, 39					; 39 = ascii '
   call WriteChar
-  mov al, bl
+  mov al, bl					; get the current char value and print
   call WriteChar
-  mov al, 39
-  call WriteChar
-  mov al, ' '
-  call WriteChar
-  movsx eax, BYTE PTR[esi]
+  mov edx, OFFSET equals		; print ' = 
+  call WriteString
+  movsx eax, WORD PTR[esi]		; Get the count value and print
   call WriteDec
   call CrLf
-  inc bl
-  inc esi
-loop l3
+  inc bl						; Move to the next char value
+  add esi, 2					; add 2 to esi to increment since count is WORD array
+loop l1
 ret
 print ENDP
 END main
