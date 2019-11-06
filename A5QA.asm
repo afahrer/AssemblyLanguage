@@ -117,6 +117,7 @@ print ENDP
 
 ; RECEIVES:  al - char value
 ; RETURNS:   zero flag = 1 if char is a letter
+; Any value that al is between 'A'-'Z' or 'a'-'z' is considered a letter
 isLetter PROC
   cmp al, 'z'	
   ja return
