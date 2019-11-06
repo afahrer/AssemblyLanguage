@@ -1,5 +1,10 @@
 TITLE Assignment 5 Question B (A5QB.asm)
-
+COMMENT !
+Description: Gets a number from the user and determines 
+             if the number is a power of 2
+Name: Adam Fahrer
+Date: November 5, 2019
+! COMMENT
 INCLUDE Irvine32.inc
 
 .data

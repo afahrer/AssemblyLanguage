@@ -1,5 +1,10 @@
 TITLE Assignment 5 Question A (A5QA.asm)
-
+COMMENT !
+Description: Counts the number of times of each digit or 
+			 letter shows up in the file specified by the user
+Name: Adam Fahrer
+Date: November 5, 2019
+! COMMENT
 INCLUDE Irvine32.inc
 
 .data

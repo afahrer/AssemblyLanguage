@@ -1,9 +1,14 @@
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:53:54
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 20:00:51
 "Assignment 5 Question B (A5QB.asm			     Page 1 - 1
 
 
 				TITLE Assignment 5 Question B (A5QB.asm)
-
+				COMMENT !
+				Description: Gets a number from the user and determines 
+				             if the number is a power of 2
+				Name: Adam Fahrer
+				Date: November 5, 2019
+				! COMMENT
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -93,7 +98,7 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:53:54
  00000067  C3			  ret
  00000068			isPowerOfTwo ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:53:54
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 20:00:51
 "Assignment 5 Question B (A5QB.asm			     Symbols 2 - 1
 
 
