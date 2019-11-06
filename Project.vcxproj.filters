@@ -7,5 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <MASM Include="A5QA.asm" />
+    <MASM Include="A5QB.asm" />
   </ItemGroup>
 </Project>
