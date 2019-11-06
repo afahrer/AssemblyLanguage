@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:52:33
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:53:54
 "Assignment 5 Question B (A5QB.asm			     Page 1 - 1
 
 
@@ -22,7 +22,6 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:52:33
 			      C .NOLIST
 			      C .LIST
 			      C 
-
 
  00000000			.data
  00000000 45 6E 74 65 72	  msg BYTE "Enter an number that is a power of 2: ",0
@@ -94,7 +93,7 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:52:33
  00000067  C3			  ret
  00000068			isPowerOfTwo ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:52:33
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/05/19 19:53:54
 "Assignment 5 Question B (A5QB.asm			     Symbols 2 - 1
 
 
