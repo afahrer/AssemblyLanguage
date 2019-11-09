@@ -6,6 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="Assignment5\A5QB.asm" />
+    <MASM Include="Assignment6\A6QA.asm" />
   </ItemGroup>
 </Project>
