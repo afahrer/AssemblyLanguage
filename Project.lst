@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/13/19 20:17:38
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/14/19 11:58:15
 "Assignment 6 Question A (A6QA.asm			     Page 1 - 1
 
 
@@ -29,7 +29,7 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/13/19 20:17:38
 			      C 
 
  00000000			.data
- = 0000000A			  newLine = 0ah											; constant for newLine acts like \n
+ = 0000000A			  newLine = 0ah	; constant for newLine acts like \n
  00000000 31 20 2D 20 50	  menu BYTE "1 - Populate the array with random numbers", newLine,
 	   6F 70 75 6C 61
 	   74 65 20 74 68
@@ -113,147 +113,168 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/13/19 20:17:38
  0000000F  E8 00000000 E	  call ReadDec											; get the option from user
  00000014  E8 00000000 E	  call CrLf
  00000019  83 F8 00		  cmp eax, 0											; if eax = 0 quit
- 0000001C  74 63		  je quit
+ 0000001C  74 67		  je quit
 
  0000001E			one: 
  0000001E  83 F8 01		  cmp eax, 1											; eax != 1, jump to 2
  00000021  75 0E		  jne two 
  00000023  6A 0A		  push LENGTHOF array									; push lengthof array and offset array then call populate
  00000025  68 0000012C R	  push OFFSET array
- 0000002A  E8 00000059		  call populate
+ 0000002A  E8 0000005D		  call populate
  0000002F  EB D4		  jmp start
 
  00000031			two:
  00000031  83 F8 02		  cmp eax, 2											; eax != 2, jump to 3
- 00000034  75 1C		  jne three
+ 00000034  75 1E		  jne three
  00000036  BA 000000F2 R	  mov edx, OFFSET getMult								; get multiplier from user
  0000003B  E8 00000000 E	  call WriteString
  00000040  E8 00000000 E	  call ReadInt
- 00000045  68 0000012C R	  push OFFSET array										; push array offset and multiplier to the stack then call multiply
- 0000004A  50			  push eax
- 0000004B  E8 00000076		  call multiply
- 00000050  EB B3		  jmp start
+ 00000045  6A 0A		  push LENGTHOF array
+ 00000047  68 0000012C R	  push OFFSET array										; push array offset and multiplier to the stack then call multiply
+ 0000004C  50			  push eax
+ 0000004D  E8 00000078		  call multiply
+ 00000052  EB B1		  jmp start
 
- 00000052			three:
- 00000052  83 F8 03		  cmp eax, 3											; eax != 3, jump to 4
- 00000055  75 1C		  jne four
- 00000057  BA 0000010F R	  mov edx, OFFSET getDiv								; get divisor from user
- 0000005C  E8 00000000 E	  call WriteString
- 00000061  E8 00000000 E	  call ReadInt
- 00000066  68 0000012C R	  push OFFSET array										; push array offset and divisor to the stack then call divide
- 0000006B  50			  push eax
- 0000006C  E8 00000078		  call divide
- 00000071  EB 92		  jmp start
+ 00000054			three:
+ 00000054  83 F8 03		  cmp eax, 3											; eax != 3, jump to 4
+ 00000057  75 1E		  jne four
+ 00000059  BA 0000010F R	  mov edx, OFFSET getDiv								; get divisor from user
+ 0000005E  E8 00000000 E	  call WriteString
+ 00000063  E8 00000000 E	  call ReadInt
+ 00000068  6A 0A		  push LENGTHOF array
+ 0000006A  68 0000012C R	  push OFFSET array										; push array offset and divisor to the stack then call divide
+ 0000006F  50			  push eax
+ 00000070  E8 00000076		  call divide
+ 00000075  EB 8E		  jmp start
 				 
- 00000073			four:
+ 00000077			four:
 				  invoke print, LENGTHOF array, OFFSET array			; invoke print method
- 00000073  68 0000012C R   *	    push   dword  ptr OFFSET FLAT: array
- 00000078  6A 0A	   *	    push   +00000000Ah
- 0000007A  E8 0000008F	   *	    call   print
- 0000007F  EB 84		  jmp start												
- 00000081			quit:
+ 00000077  68 0000012C R   *	    push   dword  ptr OFFSET FLAT: array
+ 0000007C  6A 0A	   *	    push   +00000000Ah
+ 0000007E  E8 0000008A	   *	    call   print
+ 00000083  EB 80		  jmp start			
+				  
+ 00000085			quit:
 				  exit
- 00000081  6A 00	   *	    push   +000000000h
- 00000083  E8 00000000 E   *	    call   ExitProcess
- 00000088			main ENDP
+ 00000085  6A 00	   *	    push   +000000000h
+ 00000087  E8 00000000 E   *	    call   ExitProcess
+ 0000008C			main ENDP
 
- 00000088			populate PROC
+ 0000008C			populate PROC
+				  ; RECEIVES: unnamed parameters from the stack, offset of array and lengthof array
+				  ; RETURNS: Divided values in the given array
+				  ; Preserves all registers
+ 0000008C  C8 0004 00		  ENTER 4,0												; create local variable type DWORD
+ 00000090  60			  pushad
 
- 00000088  C8 0004 00		  ENTER 4,0												; create local variable type DWORD
- 0000008C  60			  pushad
+ 00000091  8B 4D 0C		  mov ecx, [EBP + 12]									; get lengthof array from stack
+ 00000094  B8 FFFFFA24		  mov eax, -1500										; -1500 is the lower range
+ 00000099  87 45 FC		  xchg eax, [EBP-4]										; store the lower range in the local variable
+ 0000009C  8B 5D 08		  mov ebx, [EBP+8]
 
- 0000008D  8B 4D 0C		  mov ecx, [EBP + 12]									; get lengthof array from stack
- 00000090  B8 FFFFFA24		  mov eax, -1500										; -1500 is the lower range
- 00000095  87 45 FC		  xchg eax, [EBP-4]										; store the lower range in the local variable
- 00000098  8B 5D 08		  mov ebx, [EBP+8]
+ 0000009F			l1:
+ 0000009F  B8 00000FA1		  mov eax, 4001											; get random num from 0-4000 
+ 000000A4  E8 00000000 E	  call RandomRange
+ 000000A9  03 45 FC		  add eax, [EBP - 4]									; add -1500 to put number in range -1500 - +2500
+ 000000AC  89 03		  mov [ebx], eax
+ 000000AE  83 C3 02		  add ebx, TYPE WORD
+ 000000B1  E2 EC		  loop l1
 
- 0000009B			l1:
- 0000009B  B8 00000FA1		  mov eax, 4001											; get random num from 0-4000 
- 000000A0  E8 00000000 E	  call RandomRange
- 000000A5  03 45 FC		  add eax, [EBP - 4]									; add -1500 to put number in range -1500 - +2500
- 000000A8  89 03		  mov [ebx], eax
- 000000AA  83 C3 02		  add ebx, TYPE WORD
- 000000AD  E2 EC		  loop l1
+ 000000B3  BA 000000B2 R	  mov edx, OFFSET popSuccess							; display a message when complete
+ 000000B8  E8 00000000 E	  call WriteString
+ 000000BD  E8 00000000 E	  call CrLf
+ 000000C2  E8 00000000 E	  call CrLf
 
- 000000AF  BA 000000B2 R	  mov edx, OFFSET popSuccess							; display a message when complete
- 000000B4  E8 00000000 E	  call WriteString
- 000000B9  E8 00000000 E	  call CrLf
- 000000BE  E8 00000000 E	  call CrLf
+ 000000C7  61			  popad
+ 000000C8  C9			  LEAVE
+ 000000C9  C3			  ret
+ 000000CA			populate ENDP
 
- 000000C3  61			  popad
- 000000C4  C9			  LEAVE
- 000000C5  C3			  ret
- 000000C6			populate ENDP
+ 000000CA			multiply PROC, multiple:WORD, ref:DWORD, len:DWORD
+				  ; RECEIVES: parameters multiple:DOWRD, ref:DWORD and len:DWORD
+				  ; RETURNS: Multiplied values in the given array
+				  ; Preserves all registers
+ 000000CA  55		   *	    push   ebp
+ 000000CB  8B EC	   *	    mov    ebp, esp
+ 000000CD  60			  pushad
+ 000000CE  8B 4D 10		  mov ecx, len											; move array length to ecx	
+ 000000D1  8B 5D 0C		  mov ebx, ref											; move array offset to esi
+					
+ 000000D4			l1:
+ 000000D4  66| 8B 45 08		  mov ax, multiple										; ax is multiple
+ 000000D8  66| 8B 13		  mov dx, [ebx]											; dx is the value from array
+ 000000DB  66| F7 EA		  imul dx												; multiply dx with ax
+ 000000DE  66| 89 03		  mov [ebx], ax											; store the result in the array
+ 000000E1  83 C3 02		  add ebx, TYPE WORD
+ 000000E4  E2 EE		  loop l1
 
- 000000C6			multiply PROC, multiple:WORD, ref:DWORD
- 000000C6  55		   *	    push   ebp
- 000000C7  8B EC	   *	    mov    ebp, esp
- 000000C9  60			  pushad
- 000000CA  B9 0000000A		  mov ecx, LENGTHOF array		
- 000000CF  8B 5D 0C		  mov ebx, ref
- 000000D2			l1:
- 000000D2  66| 8B 45 08		  mov ax, multiple										; ax is multiple
- 000000D6  66| 8B 13		  mov dx, [ebx]											; dx is the value from array
- 000000D9  66| F7 EA		  imul dx												; multiply dx with ax
- 000000DC  66| 89 03		  mov [ebx], ax											; store the result in the array
- 000000DF  83 C3 02		  add ebx, TYPE WORD
- 000000E2  E2 EE		  loop l1
- 000000E4  61			  popad
+ 000000E6  61			  popad
 				  ret
- 000000E5  C9		   *	    leave  
- 000000E6  C2 0008	   *	    ret    00008h
- 000000E9			multiply ENDP
+ 000000E7  C9		   *	    leave  
+ 000000E8  C2 000C	   *	    ret    0000Ch
+ 000000EB			multiply ENDP
 
- 000000E9			divide PROC, divisor:WORD, ref:DWORD
- 000000E9  55		   *	    push   ebp
- 000000EA  8B EC	   *	    mov    ebp, esp
- 000000EC  60			  pushad
- 000000ED  B9 0000000A		  mov ecx, LENGTHOF array
- 000000F2  8B 75 0C		  mov esi, ref
- 000000F5			l1:
- 000000F5  66| 8B 5D 08		  mov bx, divisor										; bx is divisor
- 000000F9  66| 8B 06		  mov ax, [esi]											; ax is value from array
- 000000FC  66| 99		  cwd													; convert to dword before dividing
- 000000FE  66| F7 FB		  idiv bx													
- 00000101  66| 89 06		  mov [esi], ax											; store the result in the array
- 00000104  83 C6 02		  add esi, TYPE WORD
- 00000107  E2 EC		  loop l1
- 00000109  61			  popad
-				  ret
- 0000010A  C9		   *	    leave  
- 0000010B  C2 0008	   *	    ret    00008h
- 0000010E			divide ENDP
+ 000000EB			divide PROC
+				  ; RECEIVES: unnamed parameters from the stack, offset of array, lengthof array and divisor value
+				  ; RETURNS: Divided values in the given array
+				  ; Preserves all registers
+ 000000EB  C8 0000 00		  enter 0,0
+ 000000EF  60			  pushad
 
- 0000010E			print PROC, len:DWORD, ref:DWORD
- 0000010E  55		   *	    push   ebp
- 0000010F  8B EC	   *	    mov    ebp, esp
- 00000111  60			  pushad
- 00000112  B0 5B		  mov al, '['											; print '['
- 00000114  E8 00000000 E	  call WriteChar
- 00000119  8B 4D 08		  mov ecx, len											; move array length to ecx
- 0000011C  49			  dec ecx																
- 0000011D  BA 00000129 R	  mov edx, OFFSET commaSpace
- 00000122  8B 5D 0C		  mov ebx, ref											; ebx = OFFSET array
- 00000125			l1:
- 00000125  0F BF 03		  movsx eax, WORD PTR [ebx]								; print array value
- 00000128  E8 00000000 E	  call WriteInt
- 0000012D  E8 00000000 E	  call WriteString										; print commaSpace
- 00000132  83 C3 02		  add ebx, TYPE WORD
- 00000135  E2 EE		  loop l1
- 00000137  0F BF 03		  movsx eax, WORD PTR [ebx]								; print last value with no commaSpace
- 0000013A  E8 00000000 E	  call WriteInt
- 0000013F  B0 5D		  mov al, ']'											
- 00000141  E8 00000000 E	  call WriteChar										; print '['
- 00000146  E8 00000000 E	  call CrLf
- 0000014B  E8 00000000 E	  call CrLf
- 00000150  61			  popad
+ 000000F0  8B 4D 10		  mov ecx, [ebp+16]										; move array length to ecx
+ 000000F3  8B 75 0C		  mov esi, [ebp+12]										; move array offset to esi	
+
+ 000000F6			l1:
+ 000000F6  66| 8B 5D 08		  mov bx, [ebp+8]										; bx is divisor
+ 000000FA  66| 8B 06		  mov ax, [esi]											; ax is value from array
+ 000000FD  66| 99		  cwd													; convert to dword before dividing
+ 000000FF  66| F7 FB		  idiv bx													
+ 00000102  66| 89 06		  mov [esi], ax											; store the result in the array
+ 00000105  83 C6 02		  add esi, TYPE WORD
+ 00000108  E2 EC		  loop l1
+
+ 0000010A  61			  popad
+ 0000010B  C9			  leave
+ 0000010C  C3			  ret
+ 0000010D			divide ENDP
+
+
+ 0000010D			print PROC, len:DWORD, ref:DWORD
+				  ; RECEIVES: parameters len:DWORD and ref:DWORD
+				  ; RETURNS: Nothing
+				  ; Preserves all registers
+ 0000010D  55		   *	    push   ebp
+ 0000010E  8B EC	   *	    mov    ebp, esp
+ 00000110  60			  pushad
+ 00000111  B0 5B		  mov al, '['											; print '['
+ 00000113  E8 00000000 E	  call WriteChar
+ 00000118  8B 4D 08		  mov ecx, len											; move array length to ecx
+ 0000011B  49			  dec ecx																
+ 0000011C  BA 00000129 R	  mov edx, OFFSET commaSpace
+ 00000121  8B 5D 0C		  mov ebx, ref											; ebx = OFFSET array
+
+ 00000124			l1:
+ 00000124  0F BF 03		  movsx eax, WORD PTR [ebx]								; print array value
+ 00000127  E8 00000000 E	  call WriteInt
+ 0000012C  E8 00000000 E	  call WriteString										; print commaSpace
+ 00000131  83 C3 02		  add ebx, TYPE WORD
+ 00000134  E2 EE		  loop l1
+
+ 00000136  0F BF 03		  movsx eax, WORD PTR [ebx]								; print last value with no commaSpace
+ 00000139  E8 00000000 E	  call WriteInt
+ 0000013E  B0 5D		  mov al, ']'											
+ 00000140  E8 00000000 E	  call WriteChar										; print ']'
+ 00000145  E8 00000000 E	  call CrLf
+ 0000014A  E8 00000000 E	  call CrLf
+
+ 0000014F  61			  popad
 				  ret
- 00000151  C9		   *	    leave  
- 00000152  C2 0008	   *	    ret    00008h
- 00000155			print ENDP
+ 00000150  C9		   *	    leave  
+ 00000151  C2 0008	   *	    ret    00008h
+ 00000154			print ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/13/19 20:17:38
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/14/19 11:58:15
 "Assignment 6 Question A (A6QA.asm			     Symbols 2 - 1
 
 
@@ -348,7 +369,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000140 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000155 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000154 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -455,28 +476,27 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-divide . . . . . . . . . . . . .	P Near	 000000E9 _TEXT	Length= 00000025 Public STDCALL
-  divisor  . . . . . . . . . . .	Word	 bp + 00000008
-  ref  . . . . . . . . . . . . .	DWord	 bp + 0000000C
-  l1 . . . . . . . . . . . . . .	L Near	 000000F5 _TEXT	
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000088 Public STDCALL
+divide . . . . . . . . . . . . .	P Near	 000000EB _TEXT	Length= 00000022 Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 000000F6 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000008C Public STDCALL
   start  . . . . . . . . . . . .	L Near	 00000005 _TEXT	
   one  . . . . . . . . . . . . .	L Near	 0000001E _TEXT	
   two  . . . . . . . . . . . . .	L Near	 00000031 _TEXT	
-  three  . . . . . . . . . . . .	L Near	 00000052 _TEXT	
-  four . . . . . . . . . . . . .	L Near	 00000073 _TEXT	
-  quit . . . . . . . . . . . . .	L Near	 00000081 _TEXT	
-multiply . . . . . . . . . . . .	P Near	 000000C6 _TEXT	Length= 00000023 Public STDCALL
+  three  . . . . . . . . . . . .	L Near	 00000054 _TEXT	
+  four . . . . . . . . . . . . .	L Near	 00000077 _TEXT	
+  quit . . . . . . . . . . . . .	L Near	 00000085 _TEXT	
+multiply . . . . . . . . . . . .	P Near	 000000CA _TEXT	Length= 00000021 Public STDCALL
   multiple . . . . . . . . . . .	Word	 bp + 00000008
   ref  . . . . . . . . . . . . .	DWord	 bp + 0000000C
-  l1 . . . . . . . . . . . . . .	L Near	 000000D2 _TEXT	
-populate . . . . . . . . . . . .	P Near	 00000088 _TEXT	Length= 0000003E Public STDCALL
-  l1 . . . . . . . . . . . . . .	L Near	 0000009B _TEXT	
+  len  . . . . . . . . . . . . .	DWord	 bp + 00000010
+  l1 . . . . . . . . . . . . . .	L Near	 000000D4 _TEXT	
+populate . . . . . . . . . . . .	P Near	 0000008C _TEXT	Length= 0000003E Public STDCALL
+  l1 . . . . . . . . . . . . . .	L Near	 0000009F _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-print  . . . . . . . . . . . . .	P Near	 0000010E _TEXT	Length= 00000047 Public STDCALL
+print  . . . . . . . . . . . . .	P Near	 0000010D _TEXT	Length= 00000047 Public STDCALL
   len  . . . . . . . . . . . . .	DWord	 bp + 00000008
   ref  . . . . . . . . . . . . .	DWord	 bp + 0000000C
-  l1 . . . . . . . . . . . . . .	L Near	 00000125 _TEXT	
+  l1 . . . . . . . . . . . . . .	L Near	 00000124 _TEXT	
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 

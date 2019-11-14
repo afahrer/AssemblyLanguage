@@ -1,4 +1,4 @@
-TITLE Assignment 6 Question A (A6QA.asm)
+TITLE Assignment 6 Question 1 (A6Q1.asm)
 COMMENT !
 Description: Creates an array of random numbers that can be
 			 multiplied, divided or printed
@@ -8,7 +8,7 @@ Date: November 13, 2019
 INCLUDE Irvine32.inc
 
 .data
-  newLine = 0ah											; constant for newLine acts like \n
+  newLine = 0ah	; constant for newLine acts like \n
   menu BYTE "1 - Populate the array with random numbers", newLine,
   "2 - Mulitply the array with a user provided multiplier", newLine,
   "3 - Divide the array with a user provided divisor", newLine,
@@ -49,6 +49,7 @@ two:
   mov edx, OFFSET getMult								; get multiplier from user
   call WriteString
   call ReadInt
+  push LENGTHOF array
   push OFFSET array										; push array offset and multiplier to the stack then call multiply
   push eax
   call multiply
@@ -60,6 +61,7 @@ three:
   mov edx, OFFSET getDiv								; get divisor from user
   call WriteString
   call ReadInt
+  push LENGTHOF array
   push OFFSET array										; push array offset and divisor to the stack then call divide
   push eax
   call divide
@@ -74,7 +76,9 @@ quit:
 main ENDP
 
 populate PROC
-
+  ; RECEIVES: unnamed parameters from the stack, offset of array and lengthof array
+  ; RETURNS: Divided values in the given array
+  ; Preserves all registers
   ENTER 4,0												; create local variable type DWORD
   pushad
 
@@ -101,11 +105,14 @@ l1:
   ret
 populate ENDP
 
-multiply PROC, multiple:WORD, ref:DWORD
+multiply PROC, multiple:WORD, ref:DWORD, len:DWORD
+  ; RECEIVES: parameters multiple:DOWRD, ref:DWORD and len:DWORD
+  ; RETURNS: Multiplied values in the given array
+  ; Preserves all registers
   pushad
-  mov ecx, LENGTHOF array		
-  mov ebx, ref
-
+  mov ecx, len											; move array length to ecx	
+  mov ebx, ref											; move array offset to esi
+	
 l1:
   mov ax, multiple										; ax is multiple
   mov dx, [ebx]											; dx is the value from array
@@ -118,13 +125,18 @@ l1:
   ret
 multiply ENDP
 
-divide PROC, divisor:WORD, ref:DWORD
+divide PROC
+  ; RECEIVES: unnamed parameters from the stack, offset of array, lengthof array and divisor value
+  ; RETURNS: Divided values in the given array
+  ; Preserves all registers
+  enter 0,0
   pushad
-  mov ecx, LENGTHOF array
-  mov esi, ref
+
+  mov ecx, [ebp+16]										; move array length to ecx
+  mov esi, [ebp+12]										; move array offset to esi	
 
 l1:
-  mov bx, divisor										; bx is divisor
+  mov bx, [ebp+8]										; bx is divisor
   mov ax, [esi]											; ax is value from array
   cwd													; convert to dword before dividing
   idiv bx													
@@ -133,10 +145,15 @@ l1:
   loop l1
 
   popad
+  leave
   ret
 divide ENDP
 
+
 print PROC, len:DWORD, ref:DWORD
+  ; RECEIVES: parameters len:DWORD and ref:DWORD
+  ; RETURNS: Nothing
+  ; Preserves all registers
   pushad
   mov al, '['											; print '['
   call WriteChar
@@ -155,7 +172,7 @@ l1:
   movsx eax, WORD PTR [ebx]								; print last value with no commaSpace
   call WriteInt
   mov al, ']'											
-  call WriteChar										; print '['
+  call WriteChar										; print ']'
   call CrLf
   call CrLf
 
