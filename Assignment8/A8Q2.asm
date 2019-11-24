@@ -113,17 +113,19 @@ arr:DWORD,
 rows:DWORD,
 cols:DWORD,
 added:DWORD
-
+  LOCAL rowLength:DWORD
+  mov eax, cols
+  mov rowLength, eax
+  add rowLength, eax
   mov esi, arr
   mov eax, 0
   mov edi, added
   add edi, added
   mov ecx, rows
 l1: 
-  movsx ebx, BYTE PTR[esi+edi]
+  movsx ebx, WORD PTR[esi+edi]
   add eax, ebx
-  add esi, cols
-  add esi, cols
+  add esi, rowLength
   loop l1
 
   ret
