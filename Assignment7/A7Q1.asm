@@ -1,9 +1,8 @@
 TITLE Assignment 7 Question 1 (A7Q1.asm)
 COMMENT !
-Description: Creates an array of random numbers that can be
-			 multiplied, divided or printed
+Description: Rhombicosidodecahedron calculations
 Name: Adam Fahrer
-Date: November 13, 2019
+Date: November 24, 2019
 ! COMMENT
 INCLUDE Irvine32.inc
 

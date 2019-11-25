@@ -1,13 +1,12 @@
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/24/19 15:21:16
-"Assignment 7 Question 1 (A7Q1.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/24/19 15:29:15
+"Assignment 7 Question 2 (A7Q2.asm			     Page 1 - 1
 
 
-				TITLE Assignment 7 Question 1 (A7Q1.asm)
+				TITLE Assignment 7 Question 2 (A7Q2.asm)
 				COMMENT !
-				Description: Creates an array of random numbers that can be
-							 multiplied, divided or printed
+				Description: Prints a floating point number in binary
 				Name: Adam Fahrer
-				Date: November 13, 2019
+				Date: November 24, 2019
 				! COMMENT
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -29,239 +28,87 @@ Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/24/19 15:21:16
 			      C 
 
  00000000			.data
- 00000000 00000000		  e REAL4 ?
- 00000004 00000002		  two DWORD 2
- 00000008 00000005		  five DWORD 5
- 0000000C 0000000A		  ten DWORD 10
- 00000010 0000000B		  eleven DWORD 11
- 00000014 00000003		  three DWORD 3
- 00000018 00000004		  four DWORD 4
- 0000001C 00000019		  twentyFive DWORD 25
- 00000020 0000001D		  twentyNine DWORD 29
- 00000024 0000001E		  thirty DWORD 30
- 00000028 0000003C		  sixty DWORD 60
-				  
- 0000002C 4C 65 6E 67 74	  msg BYTE "Length of Edge: ",0
-	   68 20 6F 66 20
-	   45 64 67 65 3A
-	   20 00
- 0000003D 53 75 72 66 61	  msg1 BYTE "Surface area of the Rhombicosidodecahedron		=	",0
-	   63 65 20 61 72
-	   65 61 20 6F 66
-	   20 74 68 65 20
-	   52 68 6F 6D 62
-	   69 63 6F 73 69
-	   64 6F 64 65 63
-	   61 68 65 64 72
-	   6F 6E 09 09 3D
-	   09 00
- 0000006C 56 6F 6C 75 6D	  msg2 BYTE "Volume of the Rhombicosidodecahedron			=	",0
-	   65 20 6F 66 20
-	   74 68 65 20 52
-	   68 6F 6D 62 69
-	   63 6F 73 69 64
-	   6F 64 65 63 61
-	   68 65 64 72 6F
-	   6E 09 09 09 3D
-	   09 00
- 00000096 43 69 72 63 75	  msg3 BYTE "Circumsphere radius of the Rhombicosidodecahedron	=	",0
-	   6D 73 70 68 65
-	   72 65 20 72 61
-	   64 69 75 73 20
-	   6F 66 20 74 68
-	   65 20 52 68 6F
-	   6D 62 69 63 6F
-	   73 69 64 6F 64
-	   65 63 61 68 65
-	   64 72 6F 6E 09
-	   3D 09 00
- 000000CB 4D 69 64 73 70	  msg4 BYTE "Midsphere radius of the Rhombicosidodecahedron		=	",0
-	   68 65 72 65 20
-	   72 61 64 69 75
-	   73 20 6F 66 20
-	   74 68 65 20 52
-	   68 6F 6D 62 69
-	   63 6F 73 69 64
-	   6F 64 65 63 61
-	   68 65 64 72 6F
-	   6E 09 09 3D 09
-	   00
- 000000FE 56 6F 6C 75 6D	  msg5 BYTE "Volume of the Circumsphere				=	",0
-	   65 20 6F 66 20
-	   74 68 65 20 43
-	   69 72 63 75 6D
-	   73 70 68 65 72
-	   65 09 09 09 09
-	   3D 09 00
- 0000011F 56 6F 6C 75 6D	  msg6 BYTE "Volume of the Midsphere					=	",0
-	   65 20 6F 66 20
-	   74 68 65 20 4D
-	   69 64 73 70 68
-	   65 72 65 09 09
-	   09 09 09 3D 09
-	   00
-				  
- 0000013E 00000000		  area REAL4 ?
- 00000142 00000000		  volume REAL4 ?
- 00000146 00000000		  volumeMid REAL4 ?
- 0000014A 00000000		  volumeCir REAL4 ?
- 0000014E 00000000		  circumsphere REAL4 ?
- 00000152 00000000		  midsphere REAL4 ?
- 00000000			.code	
 
+ 00000000 00000000		userFloat DWORD	?
+ 00000004 50 6C 65 61 73	msg1 BYTE "Please enter a float: ", 0
+	   65 20 65 6E 74
+	   65 72 20 61 20
+	   66 6C 6F 61 74
+	   3A 20 00
+ 0000001B 46 6C 6F 61 74	msg2 BYTE "Float in Binary: ", 0
+	   20 69 6E 20 42
+	   69 6E 61 72 79
+	   3A 20 00
+ 0000002D 20 31 2E 00		msg3 BYTE " 1.",0
+ 00000031 20 58 20 32 5E	msg4 BYTE " X 2^", 0
+	   00
+
+ 00000000			.code
  00000000			main PROC
- 00000000  9B DB E3		  finit
- 00000003			start:
- 00000003  DD C0		  ffree st(0)
- 00000005  E8 00000000 E	  call CrLf
- 0000000A  BA 0000002C R	  mov edx, OFFSET msg
- 0000000F  E8 00000000 E	  call WriteString
- 00000014  E8 00000000 E	  call ReadFloat
- 00000019  D9 EE		  fldz
- 0000001B  DF F1		  fcomip st(0), st(1)
- 0000001D  0F 84 000001BD	  je done							; if user enters 0 end the program
- 00000023  77 DE		  ja start							; if user enter negative number reset the stack and prompt for another number
- 00000025  D9 1D 00000000 R	  fstp e							; store value of e
+
+ 00000000  9B DB E3		  finit								
+
+ 00000003  BA 00000004 R	  mov edx, OFFSET msg1
+ 00000008  E8 00000000 E	  call WriteString
+ 0000000D  E8 00000000 E	  call ReadFloat							; Get float value from user
 				  
- 0000002B  DB 05 00000008 R	  fild five							; sqrt(5)
- 00000031  D9 FA		  fsqrt
- 00000033  DB 05 0000000C R	  fild ten							; 10 * sqrt(5)
- 00000039  DE C9		  fmulp st(1), st(0)
- 0000003B  DB 05 0000001C R	  fild twentyFive					; 10 * sqrt(5) + 25
- 00000041  DE C1		  faddp st(1), st(0)
- 00000043  D9 FA		  fsqrt								; sqrt(10 * sqrt(5) + 25)				
- 00000045  DB 05 00000014 R	  fild three						; 3 * sqrt(10 * sqrt(5) + 25)
- 0000004B  DE C9		  fmul 
- 0000004D  DB 05 00000014 R	  fild three
- 00000053  D9 FA		  fsqrt
- 00000055  DB 05 00000008 R	  fild five
- 0000005B  DE C9		  fmul 
- 0000005D  DE C1		  faddp st(1), st(0) 
- 0000005F  DB 05 00000024 R	  fild thirty
- 00000065  DE C1		  fadd
- 00000067  D9 05 00000000 R	  fld e
- 0000006D  DE C9		  fmul
- 0000006F  D9 05 00000000 R	  fld e
- 00000075  DE C9		  fmul
- 00000077  D9 1D 0000013E R	  fstp area
-
- 0000007D  DB 05 00000008 R	  fild five							; volume of Rhombicosidodecahedron
- 00000083  D9 FA		  fsqrt
- 00000085  DB 05 00000020 R	  fild twentyNine
- 0000008B  DE C9		  fmul
- 0000008D  DB 05 00000028 R	  fild sixty
- 00000093  DE C1		  fadd
- 00000095  DB 05 00000014 R	  fild three
- 0000009B  DE F9		  fdiv
- 0000009D  D9 05 00000000 R	  fld e
- 000000A3  DE C9		  fmul
- 000000A5  D9 05 00000000 R	  fld e
- 000000AB  DE C9		  fmul
- 000000AD  D9 05 00000000 R	  fld e
- 000000B3  DE C9		  fmul
- 000000B5  D9 1D 00000142 R	  fstp volume
-
- 000000BB  DB 05 00000008 R	  fild five							; circumsphere radius
- 000000C1  D9 FA		  fsqrt
- 000000C3  DB 05 00000018 R	  fild four
- 000000C9  DE C9		  fmul
- 000000CB  DB 05 00000010 R	  fild eleven
- 000000D1  DE C1		  fadd
- 000000D3  D9 FA		  fsqrt
- 000000D5  D9 05 00000000 R	  fld e
- 000000DB  DE C9		  fmul
- 000000DD  DB 05 00000004 R	  fild two
- 000000E3  DE F9		  fdiv
- 000000E5  D9 1D 0000014E R	  fstp circumsphere
-
- 000000EB  DB 05 00000008 R	  fild five							; midsphere radius
- 000000F1  D9 FA		  fsqrt
- 000000F3  DB 05 00000018 R	  fild four
- 000000F9  DE C9		  fmul
- 000000FB  DB 05 0000000C R	  fild ten
- 00000101  DE C1		  fadd
- 00000103  D9 FA		  fsqrt
- 00000105  D9 05 00000000 R	  fld e
- 0000010B  DE C9		  fmul
- 0000010D  DB 05 00000004 R	  fild two
- 00000113  DE F9		  fdiv
- 00000115  D9 1D 00000152 R	  fstp midsphere
+ 00000012  D9 1D 00000000 R	  fstp userFloat							; store the value into a variable
+ 00000018  E8 00000000 E	  call CrLf
+					
+ 0000001D  BA 0000001B R	  mov edx, OFFSET msg2						; print "float in binary" message
+ 00000022  E8 00000000 E	  call WriteString					
 				  
- 0000011B  DB 05 00000018 R	  fild four							; volume of circumsphere
- 00000121  DB 05 00000014 R	  fild three
- 00000127  DE F9		  fdiv
- 00000129  D9 EB		  fldpi
- 0000012B  DE C9		  fmul
- 0000012D  D9 05 0000014E R	  fld circumsphere
- 00000133  DE C9		  fmul
- 00000135  D9 05 0000014E R	  fld circumsphere
- 0000013B  DE C9		  fmul
- 0000013D  D9 05 0000014E R	  fld circumsphere
- 00000143  DE C9		  fmul
- 00000145  D9 1D 0000014A R	  fstp volumeCir
+ 00000027  8B 1D 00000000 R	  mov ebx, userFloat					
+				  
+ 0000002D  D1 E3		  shl ebx, 1								; move the sign bit into carry flag									
+ 0000002F  72 09		  jc negative
+ 00000031  B0 2B		  mov al, '+'								; if the number is positive print '+'	
+ 00000033  E8 00000000 E	  call WriteChar							
+				  
+ 00000038  EB 07		  jmp continue
 
- 0000014B  DB 05 00000018 R	  fild four							; volume of midsphere
- 00000151  DB 05 00000014 R	  fild three
- 00000157  DE F9		  fdiv
- 00000159  D9 EB		  fldpi
- 0000015B  DE C9		  fmul
- 0000015D  D9 05 00000152 R	  fld midsphere
- 00000163  DE C9		  fmul
- 00000165  D9 05 00000152 R	  fld midsphere
- 0000016B  DE C9		  fmul
- 0000016D  D9 05 00000152 R	  fld midsphere
- 00000173  DE C9		  fmul
- 00000175  D9 1D 00000146 R	  fstp volumeMid
+ 0000003A			negative:
+ 0000003A  B0 2D		  mov al, '-'								; if the number is negative print '-'
+ 0000003C  E8 00000000 E	  call WriteChar							
+ 00000041			continue:
+ 00000041  BA 0000002D R	  mov edx, OFFSET msg3
+ 00000046  E8 00000000 E	  call WriteString
+				  
+ 0000004B  A1 00000000 R	  mov eax, userFloat
+ 00000050  C1 E8 17		  shr eax, 23								; shift the biased exponent into al
+ 00000053  2C 7F		  sub al, 127								; subtract 127 to get the exponent value
+ 00000055  BB 00000000		  mov ebx, 0
+ 0000005A  8A D8		  mov bl, al								; store in bl
+				  
+ 0000005C  A1 00000000 R	  mov eax, userFloat													
+ 00000061  C1 E0 09		  shl eax, 9								; shift left to remove the sign bit and biased exponent bits						
+ 00000064  B9 00000017		  mov ecx, 23								
+				  
+ 00000069			l1:											; move the remaining 23 bits into the carry flag one at a time
+ 00000069  D1 E0		  shl eax, 1												
+ 0000006B  72 04		  jc one									; print a 1 if the carry flag is set otherwise print 0
+ 0000006D  B0 30		  mov al, '0'								
+ 0000006F  EB 02		  jmp skipOne
+ 00000071			one:
+ 00000071  B0 31		  mov al, '1'			
+ 00000073			skipOne:
+ 00000073  E8 00000000 E	  call WriteChar
+ 00000078  E2 EF		  loop l1						
+				  
+ 0000007A  BA 00000031 R	  mov edx, OFFSET msg4						; print the exponent stored in ebx
+ 0000007F  E8 00000000 E	  call WriteString
+ 00000084  8B C3		  mov eax, ebx
+ 00000086  E8 00000000 E	  call WriteInt							
+ 0000008B  E8 00000000 E	  call ShowFPUStack
 
- 0000017B  FF 35 0000013E R	  push area							; print all values
- 00000181  68 0000003D R	  push OFFSET msg1
- 00000186  E8 00000063		  call print
-
- 0000018B  FF 35 00000142 R	  push volume
- 00000191  68 0000006C R	  push OFFSET msg2
- 00000196  E8 00000053		  call print
-
- 0000019B  FF 35 0000014E R	  push circumsphere
- 000001A1  68 00000096 R	  push OFFSET msg3
- 000001A6  E8 00000043		  call print
-
- 000001AB  FF 35 00000152 R	  push midsphere
- 000001B1  68 000000CB R	  push OFFSET msg4
- 000001B6  E8 00000033		  call print
-
- 000001BB  FF 35 0000014A R	  push volumeCir
- 000001C1  68 000000FE R	  push OFFSET msg5
- 000001C6  E8 00000023		  call print
-
- 000001CB  FF 35 00000146 R	  push volumeMid
- 000001D1  68 0000011F R	  push OFFSET msg6
- 000001D6  E8 00000013		  call print
-
- 000001DB  E9 FFFFFE23		  jmp start
- 000001E0			done:
- 000001E0  DD C0		  ffree st(0)
- 000001E2  E8 00000000 E	  call ShowFPUStack
 				  exit
- 000001E7  6A 00	   *	    push   +000000000h
- 000001E9  E8 00000000 E   *	    call   ExitProcess
- 000001EE			main ENDP
+ 00000090  6A 00	   *	    push   +000000000h
+ 00000092  E8 00000000 E   *	    call   ExitProcess
+ 00000097			main ENDP
 
- 000001EE			print PROC, offMsg:DWORD, value:REAL4
- 000001EE  55		   *	    push   ebp
- 000001EF  8B EC	   *	    mov    ebp, esp
- 000001F1  8B 55 08		  mov edx, offMsg
- 000001F4  D9 45 0C		  fld value
- 000001F7  E8 00000000 E	  call WriteString
- 000001FC  E8 00000000 E	  call WriteFloat
- 00000201  E8 00000000 E	  call CrLf
- 00000206  DD C0		  ffree st(0)
-				  ret
- 00000208  C9		   *	    leave  
- 00000209  C2 0008	   *	    ret    00008h
- 0000020C			print ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/24/19 15:21:16
-"Assignment 7 Question 1 (A7Q1.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.22.27905.0	    11/24/19 15:29:15
+"Assignment 7 Question 2 (A7Q2.asm			     Symbols 2 - 1
 
 
 
@@ -354,8 +201,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000156 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000020C Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000037 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000097 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -462,13 +309,13 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000001EE Public STDCALL
-  start  . . . . . . . . . . . .	L Near	 00000003 _TEXT	
-  done . . . . . . . . . . . . .	L Near	 000001E0 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000097 Public STDCALL
+  negative . . . . . . . . . . .	L Near	 0000003A _TEXT	
+  continue . . . . . . . . . . .	L Near	 00000041 _TEXT	
+  l1 . . . . . . . . . . . . . .	L Near	 00000069 _TEXT	
+  one  . . . . . . . . . . . . .	L Near	 00000071 _TEXT	
+  skipOne  . . . . . . . . . . .	L Near	 00000073 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-print  . . . . . . . . . . . . .	P Near	 000001EE _TEXT	Length= 0000001E Public STDCALL
-  offMsg . . . . . . . . . . . .	DWord	 bp + 00000008
-  value  . . . . . . . . . . . .	DWord	 bp + 0000000C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 
@@ -686,17 +533,11 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-area . . . . . . . . . . . . . .	DWord	 0000013E _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-circumsphere . . . . . . . . . .	DWord	 0000014E _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-eleven . . . . . . . . . . . . .	DWord	 00000010 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-e  . . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
-five . . . . . . . . . . . . . .	DWord	 00000008 _DATA	
-four . . . . . . . . . . . . . .	DWord	 00000018 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
@@ -706,25 +547,12 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-midsphere  . . . . . . . . . . .	DWord	 00000152 _DATA	
-msg1 . . . . . . . . . . . . . .	Byte	 0000003D _DATA	
-msg2 . . . . . . . . . . . . . .	Byte	 0000006C _DATA	
-msg3 . . . . . . . . . . . . . .	Byte	 00000096 _DATA	
-msg4 . . . . . . . . . . . . . .	Byte	 000000CB _DATA	
-msg5 . . . . . . . . . . . . . .	Byte	 000000FE _DATA	
-msg6 . . . . . . . . . . . . . .	Byte	 0000011F _DATA	
-msg  . . . . . . . . . . . . . .	Byte	 0000002C _DATA	
+msg1 . . . . . . . . . . . . . .	Byte	 00000004 _DATA	
+msg2 . . . . . . . . . . . . . .	Byte	 0000001B _DATA	
+msg3 . . . . . . . . . . . . . .	Byte	 0000002D _DATA	
+msg4 . . . . . . . . . . . . . .	Byte	 00000031 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sixty  . . . . . . . . . . . . .	DWord	 00000028 _DATA	
-ten  . . . . . . . . . . . . . .	DWord	 0000000C _DATA	
-thirty . . . . . . . . . . . . .	DWord	 00000024 _DATA	
-three  . . . . . . . . . . . . .	DWord	 00000014 _DATA	
-twentyFive . . . . . . . . . . .	DWord	 0000001C _DATA	
-twentyNine . . . . . . . . . . .	DWord	 00000020 _DATA	
-two  . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
-volumeCir  . . . . . . . . . . .	DWord	 0000014A _DATA	
-volumeMid  . . . . . . . . . . .	DWord	 00000146 _DATA	
-volume . . . . . . . . . . . . .	DWord	 00000142 _DATA	
+userFloat  . . . . . . . . . . .	DWord	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
